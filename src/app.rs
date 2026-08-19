@@ -1,6 +1,6 @@
 use crate::{
     action::Action,
-    core::{position::Position, selector::Selector},
+    core::{board::Board, selector::Selector},
 };
 
 pub struct AppState {
@@ -9,14 +9,11 @@ pub struct AppState {
     selector: Selector,
 }
 
-#[derive(Default)]
-pub struct Board;
-
 impl AppState {
     pub fn new() -> Self {
         Self {
             should_quit: false,
-            board: Board,
+            board: Board::new(5, 5),
             selector: Selector::new(),
         }
     }
