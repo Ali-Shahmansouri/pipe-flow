@@ -25,7 +25,7 @@ impl EventHandler {
                         KeyCode::Left => Some(Action::MoveSelectorLeft),
                         KeyCode::Right => Some(Action::MoveSelectorRight),
 
-                        KeyCode::Char('r') => Some(Action::RotateClockwise),
+                        KeyCode::Char(' ') => Some(Action::RotateClockwise),
 
                         _ => None,
                     });

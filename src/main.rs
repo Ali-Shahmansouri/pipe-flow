@@ -10,6 +10,7 @@ use crate::{app::AppState, event::EventHandler};
 
 mod action;
 mod app;
+mod core;
 mod event;
 mod ui;
 

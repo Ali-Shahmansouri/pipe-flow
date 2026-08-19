@@ -1,8 +1,12 @@
-use crate::action::Action;
+use crate::{
+    action::Action,
+    core::{position::Position, selector::Selector},
+};
 
 pub struct AppState {
     should_quit: bool,
     board: Board,
+    selector: Selector,
 }
 
 #[derive(Default)]
@@ -13,7 +17,16 @@ impl AppState {
         Self {
             should_quit: false,
             board: Board,
+            selector: Selector::new(),
         }
+    }
+
+    pub fn board(&self) -> &Board {
+        &self.board
+    }
+
+    pub fn selector(&self) -> &Selector {
+        &self.selector
     }
 
     pub fn handle_action(&mut self, action: Action) {
@@ -23,19 +36,19 @@ impl AppState {
             }
 
             Action::MoveSelectorUp => {
-                println!("move up");
+                self.selector.move_up();
             }
 
             Action::MoveSelectorDown => {
-                println!("move down");
+                self.selector.move_down();
             }
 
             Action::MoveSelectorLeft => {
-                println!("move left");
+                self.selector.move_left();
             }
 
             Action::MoveSelectorRight => {
-                println!("move right");
+                self.selector.move_right();
             }
 
             Action::RotateClockwise => {
@@ -44,15 +57,11 @@ impl AppState {
         }
     }
 
-    pub fn board(&self) -> &Board {
-        &self.board
-    }
-
     pub fn should_quit(&self) -> bool {
         self.should_quit
     }
 
-    pub fn quit(&mut self) {
+    fn quit(&mut self) {
         self.should_quit = true;
     }
 }
