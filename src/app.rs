@@ -13,7 +13,7 @@ impl AppState {
     pub fn new() -> Self {
         Self {
             should_quit: false,
-            board: Board::new(5, 5),
+            board: Board::demo(),
             selector: Selector::new(),
         }
     }

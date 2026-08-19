@@ -11,8 +11,8 @@ impl Rotation {
         Self::Zero
     }
 
-    pub fn clockwise(self) -> Self {
-        match self {
+    pub fn clockwise(&mut self) {
+        *self = match self {
             Self::Zero => Self::Ninety,
             Self::Ninety => Self::OneEighty,
             Self::OneEighty => Self::TwoSeventy,

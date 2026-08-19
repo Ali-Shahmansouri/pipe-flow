@@ -1,6 +1,7 @@
 use crate::core::{
-    cell::{self, Cell},
-    position::{self, Position},
+    cell::{Cell, block::BlockCell, l_shaped::LShapedCell, straight::StraightCell},
+    position::Position,
+    rotation::Rotation,
 };
 
 pub struct Board {
@@ -58,5 +59,30 @@ impl Board {
         }
 
         Some(position.y() * self.width as usize + position.x())
+    }
+
+    pub fn demo() -> Self {
+        let cells: Vec<Box<dyn Cell>> = vec![
+            // row 0
+            Box::new(LShapedCell::new(Rotation::Zero, false)),
+            Box::new(StraightCell::new(Rotation::Zero, false)),
+            Box::new(BlockCell::new()),
+            Box::new(LShapedCell::new(Rotation::Ninety, true)),
+            Box::new(StraightCell::new(Rotation::Ninety, false)),
+            // row 1
+            Box::new(StraightCell::new(Rotation::Ninety, false)),
+            Box::new(LShapedCell::new(Rotation::TwoSeventy, false)),
+            Box::new(BlockCell::new()),
+            Box::new(StraightCell::new(Rotation::Zero, true)),
+            Box::new(LShapedCell::new(Rotation::OneEighty, false)),
+            // row 2
+            Box::new(BlockCell::new()),
+            Box::new(StraightCell::new(Rotation::Zero, false)),
+            Box::new(LShapedCell::new(Rotation::Zero, false)),
+            Box::new(BlockCell::new()),
+            Box::new(LShapedCell::new(Rotation::TwoSeventy, true)),
+        ];
+
+        Self::new(5, 3, cells)
     }
 }
