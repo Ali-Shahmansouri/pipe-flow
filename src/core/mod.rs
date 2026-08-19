@@ -1,3 +1,5 @@
-pub mod position;
-pub mod selector;
 pub mod board;
+pub mod cell;
+pub mod position;
+pub mod rotation;
+pub mod selector;
