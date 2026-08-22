@@ -1,57 +1,42 @@
 use crate::core::{
-    cell::{Cell, FlowState, RotatableCell, connections::Connections, visual::CellVisual},
+    cell::{Cell, FlowState, RotatableCell, connections::Connections},
     rotation::Rotation,
 };
 
 pub struct StraightCell {
     rotation: Rotation,
     fixed: bool,
-    visual: CellVisual,
     connections: Connections,
     flow_state: FlowState,
 }
 
 impl StraightCell {
     pub fn new(rotation: Rotation, fixed: bool) -> Self {
-        let visual = Self::visual_for(rotation);
         let connections = Self::connections_for(rotation);
         let flow_state = Self::flow_state_for(rotation);
 
         Self {
             rotation,
             fixed,
-            visual,
             connections,
             flow_state,
         }
     }
 
-    fn visual_for(rotation: Rotation) -> CellVisual {
+    fn connections_for(rotation: Rotation) -> Connections {
         match rotation {
-            Rotation::Zero | Rotation::OneEighty => {
-                CellVisual::new(["     ".into(), "████ ".into(), "     ".into()])
-            }
+            Rotation::Zero | Rotation::OneEighty => Connections::left_right(),
 
-            Rotation::Ninety | Rotation::TwoSeventy => {
-                CellVisual::new(["  █  ".into(), "  █  ".into(), "  █  ".into()])
-            }
+            Rotation::Ninety | Rotation::TwoSeventy => Connections::up_down(),
         }
     }
 
-    fn connections_for(rotation: Rotation) -> Connections {
-        todo!()
-    }
-
     fn flow_state_for(rotation: Rotation) -> FlowState {
-        todo!()
+        FlowState::NotConnected
     }
 }
 
 impl Cell for StraightCell {
-    fn visual(&self) -> &CellVisual {
-        &self.visual
-    }
-
     fn as_rotatable(&mut self) -> Option<&mut dyn RotatableCell> {
         Some(self)
     }
@@ -84,9 +69,5 @@ impl RotatableCell for StraightCell {
 
     fn update_flow_state_after_rotation(&mut self) {
         self.flow_state = Self::flow_state_for(self.rotation);
-    }
-
-    fn update_visual_after_rotation(&mut self) {
-        self.visual = Self::visual_for(self.rotation);
     }
 }

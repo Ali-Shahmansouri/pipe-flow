@@ -2,21 +2,17 @@ use crate::core::cell::{
     Cell, FlowState, RotatableCell, connections::Connections, visual::CellVisual,
 };
 
-pub struct BlockCell {
-    visual: CellVisual,
-}
+pub struct BlockCell;
 
 impl BlockCell {
     pub fn new() -> Self {
-        Self {
-            visual: CellVisual::new(["█████".into(), "█████".into(), "█████".into()]),
-        }
+        Self
     }
 }
 
 impl Cell for BlockCell {
-    fn visual(&self) -> &CellVisual {
-        &self.visual
+    fn visual(&self) -> CellVisual {
+        CellVisual::block()
     }
 
     fn as_rotatable(&mut self) -> Option<&mut dyn RotatableCell> {

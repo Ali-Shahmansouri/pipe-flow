@@ -1,61 +1,43 @@
 use crate::core::{
-    cell::{Cell, FlowState, RotatableCell, connections::Connections, visual::CellVisual},
+    cell::{Cell, FlowState, RotatableCell, connections::Connections},
     rotation::Rotation,
 };
 
 pub struct LShapedCell {
     rotation: Rotation,
     fixed: bool,
-    visual: CellVisual,
     connections: Connections,
     flow_state: FlowState,
 }
 
 impl LShapedCell {
     pub fn new(rotation: Rotation, fixed: bool) -> Self {
-        let visual = Self::visual_for(rotation);
         let connections = Self::connections_for(rotation);
         let flow_state = Self::flow_state_for(rotation);
 
         Self {
             rotation,
             fixed,
-            visual,
             connections,
             flow_state,
         }
     }
 
-    fn visual_for(rotation: Rotation) -> CellVisual {
+    fn connections_for(rotation: Rotation) -> Connections {
         match rotation {
-            Rotation::Zero => CellVisual::new(["██   ".into(), "█    ".into(), "█    ".into()]),
-
-            Rotation::Ninety => CellVisual::new(["███  ".into(), "  █  ".into(), "     ".into()]),
-
-            Rotation::OneEighty => {
-                CellVisual::new([" █   ".into(), " █   ".into(), "███  ".into()])
-            }
-
-            Rotation::TwoSeventy => {
-                CellVisual::new(["█    ".into(), "███  ".into(), "     ".into()])
-            }
+            Rotation::Zero => Connections::up_right(),
+            Rotation::Ninety => Connections::right_down(),
+            Rotation::OneEighty => Connections::down_left(),
+            Rotation::TwoSeventy => Connections::left_up(),
         }
     }
 
-    fn connections_for(rotation: Rotation) -> Connections {
-        todo!()
-    }
-
     fn flow_state_for(rotation: Rotation) -> FlowState {
-        todo!()
+        FlowState::NotConnected
     }
 }
 
 impl Cell for LShapedCell {
-    fn visual(&self) -> &CellVisual {
-        &self.visual
-    }
-
     fn connections(&self) -> Connections {
         self.connections
     }
@@ -87,9 +69,5 @@ impl RotatableCell for LShapedCell {
 
     fn update_flow_state_after_rotation(&mut self) {
         self.flow_state = Self::flow_state_for(self.rotation);
-    }
-
-    fn update_visual_after_rotation(&mut self) {
-        self.visual = Self::visual_for(self.rotation);
     }
 }

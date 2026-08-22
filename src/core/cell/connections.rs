@@ -25,6 +25,30 @@ impl Connections {
         }
     }
 
+    pub fn up_right() -> Self {
+        Self::new(true, true, false, false)
+    }
+
+    pub fn right_down() -> Self {
+        Self::new(false, true, true, false)
+    }
+
+    pub fn down_left() -> Self {
+        Self::new(false, false, true, true)
+    }
+
+    pub fn left_up() -> Self {
+        Self::new(true, false, false, true)
+    }
+
+    pub fn left_right() -> Self {
+        Self::new(false, true, false, true)
+    }
+
+    pub fn up_down() -> Self {
+        Self::new(true, false, true, false)
+    }
+
     pub fn up(&self) -> bool {
         self.up
     }

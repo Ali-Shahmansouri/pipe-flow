@@ -15,10 +15,13 @@ pub mod straight;
 pub mod visual;
 
 pub trait Cell {
-    fn visual(&self) -> &CellVisual;
+    fn visual(&self) -> CellVisual {
+        CellVisual::from_connections(self.connections())
+    }
 
     fn render(&self, renderer: &mut dyn CellRenderer, area: RenderArea) {
-        renderer.render(self.visual(), area);
+        let visual = self.visual();
+        renderer.render(&visual, area);
     }
     fn as_rotatable(&mut self) -> Option<&mut dyn RotatableCell>;
 
@@ -49,10 +52,8 @@ pub trait RotatableCell: Cell {
     fn update_after_rotation(&mut self) {
         self.update_connections_after_rotation();
         self.update_flow_state_after_rotation();
-        self.update_visual_after_rotation();
     }
 
-    fn update_visual_after_rotation(&mut self);
     fn update_flow_state_after_rotation(&mut self);
     fn update_connections_after_rotation(&mut self);
 }
