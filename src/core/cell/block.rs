@@ -1,4 +1,6 @@
-use crate::core::cell::{Cell, RotatableCell, visual::CellVisual};
+use crate::core::cell::{
+    Cell, FlowState, RotatableCell, connections::Connections, visual::CellVisual,
+};
 
 pub struct BlockCell {
     visual: CellVisual,
@@ -17,9 +19,15 @@ impl Cell for BlockCell {
         &self.visual
     }
 
-    fn update_visual(&mut self) {}
-
     fn as_rotatable(&mut self) -> Option<&mut dyn RotatableCell> {
         None
+    }
+
+    fn connections(&self) -> Connections {
+        Connections::none()
+    }
+
+    fn flow_state(&self) -> FlowState {
+        FlowState::NotConnected
     }
 }
