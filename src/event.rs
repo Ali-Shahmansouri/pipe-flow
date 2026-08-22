@@ -1,6 +1,6 @@
 use std::{io, time::Duration};
 
-use crossterm::event::{self, Event, KeyCode};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 
 use crate::action::Action;
 
@@ -17,6 +17,10 @@ impl EventHandler {
         loop {
             if event::poll(self.tick_rate)? {
                 if let Event::Key(key) = event::read()? {
+                    if key.kind != KeyEventKind::Press {
+                        continue;
+                    }
+
                     return Ok(match key.code {
                         KeyCode::Char('q') => Some(Action::Quit),
 
