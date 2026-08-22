@@ -11,10 +11,11 @@ pub struct AppState {
 
 impl AppState {
     pub fn new() -> Self {
+        let board = Board::demo();
         Self {
             should_quit: false,
-            board: Board::demo(),
-            selector: Selector::new(),
+            selector: Selector::new(board.width() as usize, board.height() as usize),
+            board,
         }
     }
 

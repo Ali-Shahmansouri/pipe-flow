@@ -1,8 +1,15 @@
-use ratatui::{Frame, layout::Rect, widgets::Block};
+use ratatui::{
+    Frame,
+    layout::Rect,
+    style::{Color, Style},
+    widgets::{Block, BorderType},
+};
 
 use crate::core::{
     board::Board,
     cell::renderer::{RatatuiCellRenderer, RenderArea},
+    position::Position,
+    selector::Selector,
 };
 
 const CELL_WITDTH: u16 = 5;
@@ -25,18 +32,38 @@ fn cell_area(board_area: Rect, x: u16, y: u16) -> RenderArea {
     }
 }
 
-pub fn render(frame: &mut Frame, board: &Board) {
+pub fn render(frame: &mut Frame, board: &Board, selector: &Selector) {
     let board_area = frame.area();
 
-    let mut renderer = RatatuiCellRenderer::new(frame);
+    {
+        let mut renderer = RatatuiCellRenderer::new(frame);
 
-    for y in 0..board.height() {
-        for x in 0..board.width() {
-            let area = cell_area(board_area, x, y);
+        for y in 0..board.height() {
+            for x in 0..board.width() {
+                let area = cell_area(board_area, x, y);
+                let position = Position::new(x as usize, y as usize);
 
-            if let Some(cell) = board.cell((x as usize, y as usize).into()) {
-                cell.render(&mut renderer, area);
+                if let Some(cell) = board.cell(position) {
+                    cell.render(&mut renderer, area);
+                }
             }
         }
     }
+
+    // Render selector
+    let position = selector.position();
+
+    let area = cell_area(board_area, position.x() as u16, position.y() as u16);
+    let rect = Rect {
+        x: area.x,
+        y: area.y,
+        width: area.width,
+        height: area.height,
+    };
+
+    let selector_block = Block::bordered()
+        .border_type(BorderType::Thick)
+        .border_style(Style::default().fg(Color::Yellow));
+
+    frame.render_widget(selector_block, rect);
 }
