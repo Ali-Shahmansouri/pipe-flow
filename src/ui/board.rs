@@ -12,22 +12,26 @@ use crate::core::{
     selector::Selector,
 };
 
-const CELL_WITDTH: u16 = 5;
+const CELL_SLOT_WITDTH: u16 = 7;
+const CELL_SLOT_HEIGHT: u16 = 5;
+
+const CELL_WIDTH: u16 = 5;
 const CELL_HEIGHT: u16 = 3;
-
-fn calculate_board_width(board: &Board) -> u16 {
-    board.width() * CELL_WITDTH
-}
-
-fn calculate_board_height(board: &Board) -> u16 {
-    board.height() * CELL_HEIGHT
-}
 
 fn cell_area(board_area: Rect, x: u16, y: u16) -> RenderArea {
     RenderArea {
-        x: board_area.x + x * CELL_WITDTH,
-        y: board_area.y + y * CELL_HEIGHT,
-        width: CELL_WITDTH,
+        x: board_area.x + x * CELL_SLOT_WITDTH,
+        y: board_area.y + y * CELL_SLOT_HEIGHT,
+        width: CELL_SLOT_WITDTH,
+        height: CELL_SLOT_HEIGHT,
+    }
+}
+
+fn cell_content_area(area: RenderArea) -> RenderArea {
+    RenderArea {
+        x: area.x + 1,
+        y: area.y + 1,
+        width: CELL_WIDTH,
         height: CELL_HEIGHT,
     }
 }
@@ -41,10 +45,12 @@ pub fn render(frame: &mut Frame, board: &Board, selector: &Selector) {
         for y in 0..board.height() {
             for x in 0..board.width() {
                 let area = cell_area(board_area, x, y);
+                let content_area = cell_content_area(area);
+
                 let position = Position::new(x as usize, y as usize);
 
                 if let Some(cell) = board.cell(position) {
-                    cell.render(&mut renderer, area);
+                    cell.render(&mut renderer, content_area);
                 }
             }
         }
