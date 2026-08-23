@@ -50,7 +50,17 @@ impl AppState {
             }
 
             Action::RotateClockwise => {
-                println!("rotate");
+                self.rotate_selected_cell();
+            }
+        }
+    }
+
+    fn rotate_selected_cell(&mut self) {
+        let position = *self.selector.position();
+
+        if let Some(cell) = self.board.cell_mut(position) {
+            if let Some(rotatable) = cell.as_rotatable() {
+                rotatable.rotate_clockwise();
             }
         }
     }
