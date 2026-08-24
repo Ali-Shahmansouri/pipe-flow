@@ -1,21 +1,33 @@
+use std::collections::HashSet;
+
 use crate::{
     action::Action,
-    core::{board::Board, selector::Selector},
+    core::{
+        board::Board,
+        flow_detector::{DFSFlowDetector, FlowDetector},
+        position::Position,
+        selector::Selector,
+    },
 };
 
 pub struct AppState {
     should_quit: bool,
     board: Board,
     selector: Selector,
+    connected_cells: HashSet<Position>,
 }
 
 impl AppState {
     pub fn new() -> Self {
         let board = Board::demo();
+
+        let connected_cells = DFSFlowDetector::detect(&board);
+
         Self {
             should_quit: false,
             selector: Selector::new(board.width() as usize, board.height() as usize),
             board,
+            connected_cells,
         }
     }
 
@@ -25,6 +37,10 @@ impl AppState {
 
     pub fn selector(&self) -> &Selector {
         &self.selector
+    }
+
+    pub fn connected_cells(&self) -> &HashSet<Position> {
+        &self.connected_cells
     }
 
     pub fn handle_action(&mut self, action: Action) {
@@ -61,8 +77,13 @@ impl AppState {
         if let Some(cell) = self.board.cell_mut(position) {
             if let Some(rotatable) = cell.as_rotatable() {
                 rotatable.rotate_clockwise();
+                self.recalculate_flow();
             }
         }
+    }
+
+    fn recalculate_flow(&mut self) {
+        self.connected_cells = DFSFlowDetector::detect(&self.board);
     }
 
     pub fn should_quit(&self) -> bool {

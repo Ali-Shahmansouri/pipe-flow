@@ -8,6 +8,7 @@ pub struct Board {
     width: u16,
     height: u16,
     cells: Vec<Box<dyn Cell>>,
+    source_position: Position,
 }
 
 impl Board {
@@ -22,6 +23,7 @@ impl Board {
             width,
             height,
             cells,
+            source_position: Position::new(0, 0)
         }
     }
 
@@ -37,6 +39,10 @@ impl Board {
         let index = self.index(position)?;
 
         Some(self.cells[index].as_ref())
+    }
+
+    pub fn source_position(&self) -> Position {
+        self.source_position
     }
 
     pub fn cell_mut(&mut self, position: Position) -> Option<&mut dyn Cell> {
