@@ -74,11 +74,10 @@ impl AppState {
     fn rotate_selected_cell(&mut self) {
         let position = *self.selector.position();
 
-        if let Some(cell) = self.board.cell_mut(position) {
-            if let Some(rotatable) = cell.as_rotatable() {
-                rotatable.rotate_clockwise();
-                self.recalculate_flow();
-            }
+        let rotated = self.board.rotate_cell(position);
+
+        if rotated {
+            self.recalculate_flow();
         }
     }
 

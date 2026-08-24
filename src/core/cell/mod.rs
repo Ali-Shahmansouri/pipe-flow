@@ -42,11 +42,14 @@ pub trait RotatableCell: Cell {
 
     fn can_rotate(&self) -> bool;
 
-    fn rotate_clockwise(&mut self) {
-        if self.can_rotate() {
-            self.rotation_mut().clockwise();
-            self.update_after_rotation();
+    fn rotate_clockwise(&mut self) -> bool {
+        if !self.can_rotate() {
+            return false;
         }
+
+        self.rotation_mut().clockwise();
+        self.update_after_rotation();
+        return true;
     }
 
     fn update_after_rotation(&mut self) {

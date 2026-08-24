@@ -23,7 +23,7 @@ impl Board {
             width,
             height,
             cells,
-            source_position: Position::new(0, 0)
+            source_position: Position::new(0, 0),
         }
     }
 
@@ -51,12 +51,14 @@ impl Board {
         Some(self.cells[index].as_mut())
     }
 
-    pub fn rotate_cell(&mut self, position: Position) {
+    pub fn rotate_cell(&mut self, position: Position) -> bool {
         if let Some(cell) = self.cell_mut(position) {
             if let Some(rotatable) = cell.as_rotatable() {
-                rotatable.rotate_clockwise();
+                return rotatable.rotate_clockwise();
             }
         }
+
+        return false;
     }
 
     fn index(&self, position: Position) -> Option<usize> {
