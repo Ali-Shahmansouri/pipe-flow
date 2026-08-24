@@ -1,6 +1,14 @@
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
+pub enum Direction {
+    Up,
+    Down,
+    Left,
+    Right,
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Position {
     x: usize,
     y: usize,
@@ -17,6 +25,18 @@ impl Position {
 
     pub fn y(&self) -> usize {
         self.y
+    }
+
+    pub fn neighbor(&self, direction: Direction) -> Option<Position> {
+        match direction {
+            Direction::Up => self.y.checked_sub(1).map(|y| Position::new(self.x, y)),
+
+            Direction::Down => Some(Position::new(self.x, self.y + 1)),
+
+            Direction::Left => self.x.checked_sub(1).map(|x| Position::new(x, self.y)),
+
+            Direction::Right => Some(Position::new(self.x + 1, self.y)),
+        }
     }
 }
 
