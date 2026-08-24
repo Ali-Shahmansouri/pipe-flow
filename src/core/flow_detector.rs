@@ -5,22 +5,38 @@ use crate::core::{
     position::{Direction, Position},
 };
 
-pub struct FlowDetector<'a> {
-    board: &'a Board,
-    source_position: Position,
+pub trait FlowDetector {
+    fn detect(board: &Board) -> HashSet<Position>;
 }
 
-impl<'a> FlowDetector<'a> {
-    pub fn new(board: &'a Board, source_position: Position) -> Self {
-        Self {
-            board,
-            source_position,
-        }
-    }
+pub struct DFSFlowDetector;
 
-    pub fn detect(&self) -> HashSet<Position> {
+impl DFSFlowDetector {
+    fn connected_neighbor(
+        board: &Board,
+        position: Position,
+        direction: Direction,
+    ) -> Option<Position> {
+        let cell = board.cell(position)?;
+
+        let neighbor_position = position.neighbor(direction)?;
+        let neighbor_cell = board.cell(neighbor_position)?;
+
+        let connected = match direction {
+            Direction::Up => cell.connections().up() && neighbor_cell.connections().down(),
+            Direction::Down => cell.connections().down() && neighbor_cell.connections().up(),
+            Direction::Right => cell.connections().right() && neighbor_cell.connections().left(),
+            Direction::Left => cell.connections().left() && neighbor_cell.connections().right(),
+        };
+
+        connected.then_some(neighbor_position)
+    }
+}
+
+impl FlowDetector for DFSFlowDetector {
+    fn detect(board: &Board) -> HashSet<Position> {
         let mut connected = HashSet::new();
-        let mut unchecked = vec![self.source_position];
+        let mut unchecked = vec![board.source_position()];
 
         while let Some(position) = unchecked.pop() {
             if !connected.insert(position) {
@@ -33,7 +49,7 @@ impl<'a> FlowDetector<'a> {
                 Direction::Right,
                 Direction::Left,
             ] {
-                if let Some(neighbor) = self.connected_neighbor(position, direction) {
+                if let Some(neighbor) = Self::connected_neighbor(board, position, direction) {
                     if !connected.contains(&neighbor) {
                         unchecked.push(neighbor);
                     }
@@ -42,21 +58,5 @@ impl<'a> FlowDetector<'a> {
         }
 
         connected
-    }
-
-    fn connected_neighbor(&self, position: Position, direction: Direction) -> Option<Position> {
-        let cell = self.board.cell(position)?;
-
-        let neighbor_position = position.neighbor(direction)?;
-        let neighbor_cell = self.board.cell(neighbor_position)?;
-
-        let connected = match direction {
-            Direction::Up => cell.connections().up() && neighbor_cell.connections().down(),
-            Direction::Down => cell.connections().down() && neighbor_cell.connections().up(),
-            Direction::Right => cell.connections().right() && neighbor_cell.connections().left(),
-            Direction::Left => cell.connections().left() && neighbor_cell.connections().right(),
-        };
-
-        connected.then_some(neighbor_position)
     }
 }
