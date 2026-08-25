@@ -11,9 +11,8 @@ pub struct LShapedCell {
 }
 
 impl LShapedCell {
-    pub fn new(rotation: Rotation, fixed: bool) -> Self {
+    pub fn new(rotation: Rotation, flow_state: FlowState, fixed: bool) -> Self {
         let connections = Self::connections_for(rotation);
-        let flow_state = Self::flow_state_for(rotation);
 
         Self {
             rotation,
@@ -31,10 +30,6 @@ impl LShapedCell {
             Rotation::TwoSeventy => Connections::left_up(),
         }
     }
-
-    fn flow_state_for(rotation: Rotation) -> FlowState {
-        FlowState::NotConnected
-    }
 }
 
 impl Cell for LShapedCell {
@@ -48,6 +43,10 @@ impl Cell for LShapedCell {
 
     fn as_rotatable(&mut self) -> Option<&mut dyn RotatableCell> {
         Some(self)
+    }
+
+    fn set_flow_state(&mut self, flow_state: FlowState) {
+        self.flow_state = flow_state;
     }
 }
 
@@ -65,9 +64,5 @@ impl RotatableCell for LShapedCell {
 
     fn update_connections_after_rotation(&mut self) {
         self.connections = Self::connections_for(self.rotation);
-    }
-
-    fn update_flow_state_after_rotation(&mut self) {
-        self.flow_state = Self::flow_state_for(self.rotation);
     }
 }

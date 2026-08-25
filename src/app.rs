@@ -19,9 +19,10 @@ pub struct AppState {
 
 impl AppState {
     pub fn new() -> Self {
-        let board = Board::demo();
+        let mut board = Board::demo();
 
         let connected_cells = DFSFlowDetector::detect(&board);
+        board.update_flow_states(&connected_cells);
 
         Self {
             should_quit: false,
@@ -83,6 +84,7 @@ impl AppState {
 
     fn recalculate_flow(&mut self) {
         self.connected_cells = DFSFlowDetector::detect(&self.board);
+        self.board.update_flow_states(&self.connected_cells);
     }
 
     pub fn should_quit(&self) -> bool {

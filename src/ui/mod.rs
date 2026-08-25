@@ -5,5 +5,5 @@ use crate::app::AppState;
 mod board;
 
 pub fn render(frame: &mut Frame, app: &AppState) {
-    board::render(frame, app.board(), app.selector());
+    board::render(frame, app.board(), app.selector(), app.connected_cells());
 }

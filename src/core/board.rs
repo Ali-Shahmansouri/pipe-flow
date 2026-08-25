@@ -1,5 +1,7 @@
+use std::collections::HashSet;
+
 use crate::core::{
-    cell::{Cell, block::BlockCell, l_shaped::LShapedCell, straight::StraightCell},
+    cell::{Cell, FlowState, block::BlockCell, l_shaped::LShapedCell, straight::StraightCell},
     position::Position,
     rotation::Rotation,
 };
@@ -69,26 +71,48 @@ impl Board {
         Some(position.y() * self.width as usize + position.x())
     }
 
+    pub fn update_flow_states(&mut self, connected: &HashSet<Position>) {
+        for y in 0..self.height() {
+            for x in 0..self.width() {
+                let position = Position::new(x as usize, y as usize);
+
+                if let Some(cell) = self.cell_mut(position) {
+                    let flow_state = if connected.contains(&position) {
+                        FlowState::Flowing
+                    } else {
+                        FlowState::Dry
+                    };
+
+                    cell.set_flow_state(flow_state);
+                }
+            }
+        }
+    }
+
     pub fn demo() -> Self {
         let cells: Vec<Box<dyn Cell>> = vec![
             // row 0
-            Box::new(LShapedCell::new(Rotation::Zero, false)),
-            Box::new(StraightCell::new(Rotation::Zero, false)),
+            Box::new(LShapedCell::new(Rotation::Zero, FlowState::Dry, false)),
+            Box::new(StraightCell::new(Rotation::Zero, FlowState::Dry, false)),
             Box::new(BlockCell::new()),
-            Box::new(LShapedCell::new(Rotation::Ninety, true)),
-            Box::new(StraightCell::new(Rotation::Ninety, false)),
+            Box::new(LShapedCell::new(Rotation::Ninety, FlowState::Dry, true)),
+            Box::new(StraightCell::new(Rotation::Ninety, FlowState::Dry, false)),
             // row 1
-            Box::new(StraightCell::new(Rotation::Ninety, false)),
-            Box::new(LShapedCell::new(Rotation::TwoSeventy, false)),
+            Box::new(LShapedCell::new(Rotation::Ninety, FlowState::Dry, false)),
+            Box::new(LShapedCell::new(
+                Rotation::TwoSeventy,
+                FlowState::Dry,
+                false,
+            )),
             Box::new(BlockCell::new()),
-            Box::new(StraightCell::new(Rotation::Zero, true)),
-            Box::new(LShapedCell::new(Rotation::OneEighty, false)),
+            Box::new(StraightCell::new(Rotation::Zero, FlowState::Dry, true)),
+            Box::new(LShapedCell::new(Rotation::OneEighty, FlowState::Dry, false)),
             // row 2
             Box::new(BlockCell::new()),
-            Box::new(StraightCell::new(Rotation::Zero, false)),
-            Box::new(LShapedCell::new(Rotation::Zero, false)),
+            Box::new(StraightCell::new(Rotation::Zero, FlowState::Dry, false)),
+            Box::new(LShapedCell::new(Rotation::Zero, FlowState::Dry, false)),
             Box::new(BlockCell::new()),
-            Box::new(LShapedCell::new(Rotation::TwoSeventy, true)),
+            Box::new(LShapedCell::new(Rotation::TwoSeventy, FlowState::Dry, true)),
         ];
 
         Self::new(5, 3, cells)

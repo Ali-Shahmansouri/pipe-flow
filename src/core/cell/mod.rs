@@ -16,7 +16,7 @@ pub mod visual;
 
 pub trait Cell {
     fn visual(&self) -> CellVisual {
-        CellVisual::from_connections(self.connections())
+        CellVisual::from_connections(self.connections(), self.flow_state())
     }
 
     fn render(&self, renderer: &mut dyn CellRenderer, area: RenderArea) {
@@ -27,12 +27,12 @@ pub trait Cell {
 
     fn connections(&self) -> Connections;
     fn flow_state(&self) -> FlowState;
+    fn set_flow_state(&mut self, flow_state: FlowState);
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FlowState {
-    NotConnected,
-    Connected,
+    Dry,
     Flowing,
 }
 
@@ -54,9 +54,7 @@ pub trait RotatableCell: Cell {
 
     fn update_after_rotation(&mut self) {
         self.update_connections_after_rotation();
-        self.update_flow_state_after_rotation();
     }
 
-    fn update_flow_state_after_rotation(&mut self);
     fn update_connections_after_rotation(&mut self);
 }

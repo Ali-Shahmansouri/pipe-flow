@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use ratatui::{
     Frame,
     layout::Rect,
@@ -36,7 +38,12 @@ fn cell_content_area(area: RenderArea) -> RenderArea {
     }
 }
 
-pub fn render(frame: &mut Frame, board: &Board, selector: &Selector) {
+pub fn render(
+    frame: &mut Frame,
+    board: &Board,
+    selector: &Selector,
+    connected_cells: &HashSet<Position>,
+) {
     let board_area = frame.area();
 
     {
@@ -54,6 +61,20 @@ pub fn render(frame: &mut Frame, board: &Board, selector: &Selector) {
                 }
             }
         }
+    }
+    // Flow Rendering
+    for position in connected_cells {
+        let area = cell_area(board_area, position.x() as u16, position.y() as u16);
+        let rect = Rect {
+            x: area.x,
+            y: area.y,
+            width: area.width,
+            height: area.height,
+        };
+
+        let flow_block = Block::bordered().border_style(Style::default().fg(Color::Green));
+
+        frame.render_widget(flow_block, rect);
     }
 
     // Render selector

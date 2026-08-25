@@ -24,6 +24,8 @@ impl Cell for BlockCell {
     }
 
     fn flow_state(&self) -> FlowState {
-        FlowState::NotConnected
+        FlowState::Dry
     }
+
+    fn set_flow_state(&mut self, _flow_state: FlowState) {}
 }
