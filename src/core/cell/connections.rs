@@ -53,15 +53,31 @@ impl Connections {
         self.up
     }
 
+    pub fn set_up(&mut self, up: bool) {
+        self.up = up;
+    }
+
     pub fn down(&self) -> bool {
         self.down
+    }
+
+    pub fn set_down(&mut self, down: bool) {
+        self.down = down;
     }
 
     pub fn right(&self) -> bool {
         self.right
     }
 
+    pub fn set_right(&mut self, right: bool) {
+        self.right = right;
+    }
+
     pub fn left(&self) -> bool {
         self.left
+    }
+
+    pub fn set_left(&mut self, left: bool) {
+        self.left = left;
     }
 }

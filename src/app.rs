@@ -4,6 +4,7 @@ use crate::{
     action::Action,
     core::{
         board::Board,
+        board_generator::BackwardsBoardGenerator,
         flow_detector::{DFSFlowDetector, FlowDetector},
         position::Position,
         selector::Selector,
@@ -19,7 +20,7 @@ pub struct AppState {
 
 impl AppState {
     pub fn new() -> Self {
-        let mut board = Board::demo();
+        let mut board = Board::generate_random::<BackwardsBoardGenerator>(5, 5);
 
         let connected_cells = DFSFlowDetector::detect(&board);
         board.update_flow_states(&connected_cells);

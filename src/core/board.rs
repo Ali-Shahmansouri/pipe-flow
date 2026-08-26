@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 
 use crate::core::{
+    board_generator::RandomBoardGenator,
     cell::{Cell, FlowState, block::BlockCell, l_shaped::LShapedCell, straight::StraightCell},
     position::Position,
     rotation::Rotation,
@@ -11,10 +12,17 @@ pub struct Board {
     height: u16,
     cells: Vec<Box<dyn Cell>>,
     source_position: Position,
+    destination_position: Position,
 }
 
 impl Board {
-    pub fn new(width: u16, height: u16, cells: Vec<Box<dyn Cell>>) -> Self {
+    pub fn new(
+        width: u16,
+        height: u16,
+        cells: Vec<Box<dyn Cell>>,
+        source_position: Position,
+        destination_position: Position,
+    ) -> Self {
         assert_eq!(
             cells.len(),
             width as usize * height as usize,
@@ -25,8 +33,13 @@ impl Board {
             width,
             height,
             cells,
-            source_position: Position::new(0, 0),
+            source_position,
+            destination_position,
         }
+    }
+
+    pub fn generate_random<R: RandomBoardGenator>(width: u16, height: u16) -> Self {
+        R::generate(width, height)
     }
 
     pub fn width(&self) -> u16 {
@@ -92,29 +105,25 @@ impl Board {
     pub fn demo() -> Self {
         let cells: Vec<Box<dyn Cell>> = vec![
             // row 0
-            Box::new(LShapedCell::new(Rotation::Zero, FlowState::Dry, false)),
-            Box::new(StraightCell::new(Rotation::Zero, FlowState::Dry, false)),
+            Box::new(LShapedCell::new(Rotation::Zero, false)),
+            Box::new(StraightCell::new(Rotation::Zero, false)),
             Box::new(BlockCell::new()),
-            Box::new(LShapedCell::new(Rotation::Ninety, FlowState::Dry, true)),
-            Box::new(StraightCell::new(Rotation::Ninety, FlowState::Dry, false)),
+            Box::new(LShapedCell::new(Rotation::Ninety, true)),
+            Box::new(StraightCell::new(Rotation::Ninety, false)),
             // row 1
-            Box::new(LShapedCell::new(Rotation::Ninety, FlowState::Dry, false)),
-            Box::new(LShapedCell::new(
-                Rotation::TwoSeventy,
-                FlowState::Dry,
-                false,
-            )),
+            Box::new(LShapedCell::new(Rotation::Ninety, false)),
+            Box::new(LShapedCell::new(Rotation::TwoSeventy, false)),
             Box::new(BlockCell::new()),
-            Box::new(StraightCell::new(Rotation::Zero, FlowState::Dry, true)),
-            Box::new(LShapedCell::new(Rotation::OneEighty, FlowState::Dry, false)),
+            Box::new(StraightCell::new(Rotation::Zero, true)),
+            Box::new(LShapedCell::new(Rotation::OneEighty, false)),
             // row 2
             Box::new(BlockCell::new()),
-            Box::new(StraightCell::new(Rotation::Zero, FlowState::Dry, false)),
-            Box::new(LShapedCell::new(Rotation::Zero, FlowState::Dry, false)),
+            Box::new(StraightCell::new(Rotation::Zero, false)),
+            Box::new(LShapedCell::new(Rotation::Zero, false)),
             Box::new(BlockCell::new()),
-            Box::new(LShapedCell::new(Rotation::TwoSeventy, FlowState::Dry, true)),
+            Box::new(LShapedCell::new(Rotation::TwoSeventy, true)),
         ];
 
-        Self::new(5, 3, cells)
+        Self::new(5, 3, cells, Position::new(0, 0), Position::new(4, 2))
     }
 }

@@ -11,8 +11,9 @@ pub struct LShapedCell {
 }
 
 impl LShapedCell {
-    pub fn new(rotation: Rotation, flow_state: FlowState, fixed: bool) -> Self {
+    pub fn new(rotation: Rotation, fixed: bool) -> Self {
         let connections = Self::connections_for(rotation);
+        let flow_state = FlowState::Dry;
 
         Self {
             rotation,
