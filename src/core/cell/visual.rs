@@ -5,10 +5,6 @@ pub struct CellVisual {
 }
 
 impl CellVisual {
-    pub fn new(rows: [String; 3]) -> Self {
-        Self { rows }
-    }
-
     pub fn rows(&self) -> &[String; 3] {
         &self.rows
     }

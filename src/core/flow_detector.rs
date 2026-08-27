@@ -36,7 +36,7 @@ impl DFSFlowDetector {
 impl FlowDetector for DFSFlowDetector {
     fn detect(board: &Board) -> HashSet<Position> {
         let mut connected = HashSet::new();
-        let mut unchecked = vec![board.source_position()];
+        let mut unchecked = vec![board.start_position()];
 
         while let Some(position) = unchecked.pop() {
             if !connected.insert(position) {

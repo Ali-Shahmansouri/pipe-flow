@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use ratatui::{
     Frame,
     layout::Rect,
@@ -20,6 +18,17 @@ const CELL_SLOT_HEIGHT: u16 = 5;
 const CELL_WIDTH: u16 = 5;
 const CELL_HEIGHT: u16 = 3;
 
+impl From<RenderArea> for Rect {
+    fn from(area: RenderArea) -> Self {
+        Rect {
+            x: area.x,
+            y: area.y,
+            width: area.width,
+            height: area.height,
+        }
+    }
+}
+
 fn cell_area(board_area: Rect, x: u16, y: u16) -> RenderArea {
     RenderArea {
         x: board_area.x + x * CELL_SLOT_WITDTH,
@@ -38,12 +47,7 @@ fn cell_content_area(area: RenderArea) -> RenderArea {
     }
 }
 
-pub fn render(
-    frame: &mut Frame,
-    board: &Board,
-    selector: &Selector,
-    connected_cells: &HashSet<Position>,
-) {
+pub fn render(frame: &mut Frame, board: &Board, selector: &Selector) {
     let board_area = frame.area();
 
     {
@@ -62,35 +66,48 @@ pub fn render(
             }
         }
     }
-    // Flow Rendering
-    for position in connected_cells {
-        let area = cell_area(board_area, position.x() as u16, position.y() as u16);
-        let rect = Rect {
-            x: area.x,
-            y: area.y,
-            width: area.width,
-            height: area.height,
-        };
 
-        let flow_block = Block::bordered().border_style(Style::default().fg(Color::Green));
+    // Source | Destination
+    render_endpoint(
+        frame,
+        board_area,
+        board.start_position(),
+        Color::Green,
+        BorderType::Rounded,
+    );
 
-        frame.render_widget(flow_block, rect);
-    }
+    render_endpoint(
+        frame,
+        board_area,
+        board.destination_position(),
+        Color::Cyan,
+        BorderType::Double,
+    );
 
     // Render selector
     let position = selector.position();
 
     let area = cell_area(board_area, position.x() as u16, position.y() as u16);
-    let rect = Rect {
-        x: area.x,
-        y: area.y,
-        width: area.width,
-        height: area.height,
-    };
 
     let selector_block = Block::bordered()
         .border_type(BorderType::Thick)
         .border_style(Style::default().fg(Color::Yellow));
 
-    frame.render_widget(selector_block, rect);
+    frame.render_widget(selector_block, area.into());
+}
+
+fn render_endpoint(
+    frame: &mut Frame,
+    board_area: Rect,
+    position: Position,
+    color: Color,
+    border_type: BorderType,
+) {
+    let area = cell_area(board_area, position.x() as u16, position.y() as u16);
+
+    let block = Block::bordered()
+        .border_type(border_type)
+        .border_style(Style::default().fg(color));
+
+    frame.render_widget(block, area.into());
 }
